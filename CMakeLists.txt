@@ -60,11 +60,6 @@ write_basic_package_version_file(
     "certifyConfigVersion.cmake"
     COMPATIBILITY AnyNewerVersion)
 
-install(FILES
-            "netutilsConfig.cmake"
-            "${CMAKE_BINARY_DIR}/certifyConfigVersion.cmake"
-        DESTINATION lib/cmake/certify)
-
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
         DESTINATION include
         FILES_MATCHING PATTERN "*.hpp")
