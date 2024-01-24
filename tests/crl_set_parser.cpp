@@ -43,5 +43,5 @@ main()
     check_error_case(3, boost::certify::crlset_error::header_truncated);
     check_error_case(42, boost::certify::crlset_error::serial_truncated);
 
-    return 0;
+    return boost::report_errors();
 }

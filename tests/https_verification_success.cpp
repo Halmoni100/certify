@@ -25,5 +25,5 @@ main()
     }
     BOOST_TEST(count > 0);
 
-    return 0;
+    return boost::report_errors();
 }

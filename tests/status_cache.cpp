@@ -47,5 +47,5 @@ main()
         BOOST_TEST(cache.check(str) == bc::certificate_status::revoked);
     }
 
-    return 0;
+    return boost::report_errors();
 }
