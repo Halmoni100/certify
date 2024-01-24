@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
+include($ENV{HOME}/system/cmake/default.cmake OPTIONAL)
 project(certify VERSION 0.1 LANGUAGES CXX)
 
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/CMakeModules)
@@ -17,8 +18,6 @@ endif()
 
 find_package(Boost 1.67
              COMPONENTS
-                system
-                filesystem
 				date_time
                 unit_test_framework
              REQUIRED)
@@ -51,8 +50,6 @@ endif()
 target_link_libraries(
     core
     INTERFACE
-        Boost::system
-        Boost::filesystem
         Boost::date_time
         Threads::Threads
         OpenSSL::SSL

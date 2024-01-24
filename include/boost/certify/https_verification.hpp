@@ -19,7 +19,7 @@ verify_certificate_chain(::X509_STORE_CTX* ctx);
 inline void
 set_server_hostname(::SSL* handle,
                     string_view hostname,
-                    system::error_code& ec);
+                    std::error_code& ec);
 
 extern "C" inline int
 verify_server_certificates(int preverified, X509_STORE_CTX* ctx) noexcept;
@@ -47,7 +47,7 @@ template<class NextLayer>
 void
 set_server_hostname(asio::ssl::stream<NextLayer>& stream,
                     string_view hostname,
-                    system::error_code& ec);
+                    std::error_code& ec);
 
 template<class NextLayer>
 void

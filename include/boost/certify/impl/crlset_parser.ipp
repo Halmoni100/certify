@@ -31,7 +31,7 @@ crlset_parser_category::message(int ev) const
     }
 }
 
-inline system::error_code
+inline std::error_code
 make_error_code(crlset_error ev)
 {
     return {static_cast<int>(ev),
@@ -39,7 +39,7 @@ make_error_code(crlset_error ev)
 }
 
 inline std::vector<crlset>
-parse_crlset(asio::const_buffer b, system::error_code& ec)
+parse_crlset(asio::const_buffer b, std::error_code& ec)
 {
     std::vector<crlset> sets;
 
@@ -97,10 +97,10 @@ parse_crlset(asio::const_buffer b, system::error_code& ec)
 inline std::vector<crlset>
 parse_crlset(boost::asio::const_buffer b)
 {
-    system::error_code ec;
+    std::error_code ec;
     auto ret = certify::parse_crlset(b, ec);
     if (ec)
-        boost::throw_exception(system::system_error{ec});
+        boost::throw_exception(std::system_error{ec});
     return ret;
 }
 

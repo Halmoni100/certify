@@ -1,9 +1,9 @@
 #ifndef BOOST_CERTIFY_CRLSET_PARSER_HPP
 #define BOOST_CERTIFY_CRLSET_PARSER_HPP
 
+#include <system_error>
 #include <boost/asio/buffer.hpp>
 #include <boost/endian/arithmetic.hpp>
-#include <boost/system/system_error.hpp>
 
 namespace boost
 {
@@ -32,7 +32,7 @@ enum class crlset_error
     serial_truncated
 };
 
-class crlset_parser_category : public system::error_category
+class crlset_parser_category : public std::error_category
 {
 public:
     char const* name() const noexcept override;
@@ -40,7 +40,7 @@ public:
     std::string message(int ev) const override;
 };
 
-system::error_code
+std::error_code
 make_error_code(crlset_error ev);
 
 struct crlset
@@ -50,23 +50,18 @@ struct crlset
 };
 
 std::vector<crlset>
-parse_crlset(asio::const_buffer b, system::error_code& ec);
+parse_crlset(asio::const_buffer b, std::error_code& ec);
 
 std::vector<crlset>
 parse_crlset(boost::asio::const_buffer b);
 
 } // namespace certify
 
-namespace system
-{
-template<>
-struct is_error_code_enum<::boost::certify::crlset_error>
-{
-    static bool const value = true;
-};
-} // namespace system
 
 } // namespace boost
+
+template<>
+struct std::is_error_code_enum<::boost::certify::crlset_error> : public std::true_type{};
 
 #include <boost/certify/impl/crlset_parser.ipp>
 

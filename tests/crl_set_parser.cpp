@@ -26,13 +26,13 @@ main()
     BOOST_TEST(set.at(0).serials.at(0) == serial);
     BOOST_TEST(set.at(0).serials.at(1) == serial);
 
-    auto check_error_case = [](std::size_t n, boost::system::error_code ec) {
+    auto check_error_case = [](std::size_t n, std::error_code ec) {
         try
         {
             std::vector<boost::certify::crlset> set =
               boost::certify::parse_crlset(boost::asio::buffer(&array, n));
         }
-        catch (boost::system::system_error const& err)
+        catch (std::system_error const& err)
         {
             BOOST_TEST(err.code() == ec);
             return;
@@ -43,5 +43,5 @@ main()
     check_error_case(3, boost::certify::crlset_error::header_truncated);
     check_error_case(42, boost::certify::crlset_error::serial_truncated);
 
-    return boost::report_errors();
+    return 0;
 }

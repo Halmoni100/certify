@@ -1,12 +1,11 @@
 #ifndef BOOST_CERTIFY_VERIFICATION_UTILS_HPP
 #define BOOST_CERTIFY_VERIFICATION_UTILS_HPP
 
+#include <filesystem>
+
 #include <boost/certify/https_verification.hpp>
 
 #include <boost/asio/ssl/error.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
-#include <boost/system/error_code.hpp>
 #include <boost/utility/string_view.hpp>
 #include <openssl/pem.h>
 #include <openssl/x509.h>
@@ -32,7 +31,7 @@ public:
     }
 
     static certificate_chain from_file(
-      boost::filesystem::path const& chain_path)
+      std::filesystem::path const& chain_path)
     {
         auto const bio_free = [](::BIO* b) { ::BIO_free(b); };
         std::unique_ptr<::BIO, decltype(bio_free)> file{
@@ -79,10 +78,10 @@ public:
     {
         if (handle_ == nullptr)
         {
-            system::error_code ec;
+            std::error_code ec;
             ec = {static_cast<int>(::ERR_get_error()),
                   boost::asio::error::get_ssl_category()};
-            boost::throw_exception(system::system_error{ec});
+            boost::throw_exception(std::system_error{ec});
         }
     }
 
@@ -109,7 +108,7 @@ private:
     std::unique_ptr<::X509_STORE, free> handle_;
 };
 
-class store_ctx_category : public system::error_category
+class store_ctx_category : public std::error_category
 {
 public:
     const char* name() const BOOST_ASIO_ERROR_CATEGORY_NOEXCEPT
@@ -124,7 +123,7 @@ public:
     }
 };
 
-inline system::error_category const&
+inline std::error_category const&
 get_store_ctx_category()
 {
     static store_ctx_category const instance;
@@ -139,12 +138,12 @@ public:
     explicit store_ctx(certificate_chain& chain, certificate_store& store)
       : handle_{::X509_STORE_CTX_new()}
     {
-        system::error_code ec;
+        std::error_code ec;
         if (handle_ == nullptr)
         {
             ec = {static_cast<int>(::ERR_get_error()),
                   boost::asio::error::get_ssl_category()};
-            boost::throw_exception(system::system_error{ec});
+            throw std::system_error{ec};
         }
 
         X509* const cert = sk_X509_value(chain.native_handle(), 0);
@@ -155,7 +154,7 @@ public:
 
             ec = {static_cast<int>(::ERR_get_error()),
                   boost::asio::error::get_ssl_category()};
-            boost::throw_exception(system::system_error{ec});
+            throw std::system_error{ec};
         }
         ::X509_STORE_CTX_set_verify_cb(handle_.get(),
                                        &detail::verify_server_certificates);
@@ -177,13 +176,13 @@ public:
     void set_server_hostname(string_view hostname)
     {
         auto* param = ::X509_STORE_CTX_get0_param(handle_.get());
-        system::error_code ec;
+        std::error_code ec;
         detail::set_server_hostname(param, hostname, ec);
         if (ec)
-            boost::throw_exception(system::system_error{ec});
+            throw std::system_error{ec};
     }
 
-    void verify(system::error_code& ec)
+    void verify(std::error_code& ec)
     {
         auto ret = ::X509_verify_cert(handle_.get());
         if (ret != 1)
@@ -197,10 +196,10 @@ public:
 
     void verify()
     {
-        system::error_code ec;
+        std::error_code ec;
         verify(ec);
         if (ec)
-            boost::throw_exception(system::system_error{ec});
+            throw std::system_error{ec};
     }
 
 private:
@@ -216,11 +215,11 @@ private:
 };
 
 void
-verify_chain(boost::filesystem::path const& chain_path,
+verify_chain(std::filesystem::path const& chain_path,
              boost::certify::certificate_store& store,
-             system::error_code& ec)
+             std::error_code& ec)
 {
-    if (!boost::filesystem::is_regular_file(chain_path))
+    if (!std::filesystem::is_regular_file(chain_path))
         return;
 
     auto cert_chain = boost::certify::certificate_chain::from_file(chain_path);

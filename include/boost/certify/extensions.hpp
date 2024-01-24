@@ -19,7 +19,7 @@ template<class AsyncStream>
 void
 sni_hostname(asio::ssl::stream<AsyncStream>& stream,
              std::string const& hostname,
-             system::error_code& ec);
+             std::error_code& ec);
 
 template<class AsyncStream>
 void

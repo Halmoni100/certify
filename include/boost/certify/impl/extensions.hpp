@@ -24,7 +24,7 @@ template<class AsyncStream>
 void
 sni_hostname(asio::ssl::stream<AsyncStream>& stream,
              std::string const& hostname,
-             system::error_code& ec)
+             std::error_code& ec)
 {
     auto ret =
       SSL_set_tlsext_host_name(stream.native_handle(), hostname.c_str());
@@ -40,10 +40,10 @@ void
 sni_hostname(asio::ssl::stream<AsyncStream>& stream,
              std::string const& hostname)
 {
-    system::error_code ec;
+    std::error_code ec;
     sni_hostname(stream, hostname, ec);
     if (ec)
-        boost::throw_exception(system::system_error{ec});
+        throw std::system_error{ec};
 }
 
 } // namespace certify
