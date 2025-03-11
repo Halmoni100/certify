@@ -24,7 +24,7 @@ find_package(Boost 1.67
 
 find_package (Threads)
 
-find_package(OpenSSL REQUIRED)
+find_package(OpenSSL REQUIRED MODULE)
 
 
 add_library(core INTERFACE)
